@@ -2,24 +2,38 @@ import React, { Component } from 'react'
 import HeroFilter from '../../components/HeroFilter'
 import HeroTable from '../../components/HeroTable'
 
-const heroes = [
-  { name: 'Gandalf', race: 'Maia', age: '2019', weapon: 'Staff 🏑' },
-  { name: 'Aragorn', race: 'Human', age: '120', weapon: 'Sword ⚔' },
-  { name: 'Legolas', race: 'Elf', age: '200', weapon: 'Bow 🏹' },
-  { name: 'Gimli', race: 'Dwarf', age: '139', weapon: 'Axe ⚒' },
-  { name: 'Frodo', race: 'Hobbit', age: '33', weapon: 'Dagger 🗡' },
-  { name: 'Bilbo', race: 'Hobbit', age: '200', weapon: 'Dagger 🗡' },
-]
-
 export default class HeroContainer extends Component {
   constructor (props) {
     super(props)
 
     this.state = {
-      filterText: ''
+      filterText: '',
+      heroesEntities: {
+        '1': { id: '1', name: 'Gandalf', race: 'Maia', age: '2019', weapon: 'Staff 🏑' },
+        '2': { id: '2', name: 'Aragorn', race: 'Human', age: '120', weapon: 'Sword ⚔' },
+        '3': { id: '3', name: 'Legolas', race: 'Elf', age: '200', weapon: 'Bow 🏹' },
+        '4': { id: '4', name: 'Gimli', race: 'Dwarf', age: '139', weapon: 'Axe ⚒' },
+        '5': { id: '5', name: 'Frodo', race: 'Hobbit', age: '33', weapon: 'Dagger 🗡' },
+        '6': { id: '6', name: 'Bilbo', race: 'Hobbit', age: '200', weapon: 'Dagger 🗡' }
+      },
+      heroesList: ['1', '2', '3', '4', '5', '6'],
+      usingRingIndex: null
     }
 
     this.handleInputChange = this.handleInputChange.bind(this)
+    this.killHero = this.killHero.bind(this)
+    this.putRing = this.putRing.bind(this)
+    this.recoverRing = this.recoverRing.bind(this)
+  }
+
+  componentDidMount () {
+    document.title = 'Comunidad del anillo'
+  }
+
+  componentDidUpdate () {
+    if (this.state.usingRingIndex) {
+      document.title = 'Alguien está usando el anillo.'
+    }
   }
 
   handleInputChange (event) {
@@ -27,11 +41,51 @@ export default class HeroContainer extends Component {
       filterText: event.target.value
     })
   }
+
+  editEntity (entities, index, params) {
+    return {
+      ...entities,
+      [index]: {
+        ...entities[index],
+        ...params
+      }
+    }
+  }
+
+  killHero (heroIndex) {
+    const { heroesEntities, heroesList } = this.state
+
+    const withoutKilled = heroesList.filter(heroId => heroId !== heroIndex)
+
+    this.setState({
+      heroesEntities: this.editEntity(heroesEntities, heroIndex, { status: 'dead' }),
+      heroesList: [...withoutKilled, heroIndex]
+    })
+  }
+
+  putRing (heroIndex) {
+    const { heroesEntities } = this.state
+
+    this.setState({
+      heroesEntities: this.editEntity(heroesEntities, heroIndex, { usingRing: true }),
+      usingRingIndex: heroIndex
+    })
+  }
+
+  recoverRing () {
+    const { usingRingIndex, heroesEntities } = this.state
+
+    this.setState({
+      heroesEntities: this.editEntity(heroesEntities, usingRingIndex, { usingRing: false }),
+      usingRingIndex: null
+    })
+  }
   
   render() {
-    const { filterText } = this.state
+    console.log('SE RENDERIZO')
+    const { filterText, heroesList, heroesEntities, usingRingIndex } = this.state
 
-    let filteredArray = heroes
+    let filteredArray = heroesList.map(heroId => heroesEntities[heroId])
 
     if (filterText) {
       filteredArray = filteredArray.filter(hero => {
@@ -47,6 +101,8 @@ export default class HeroContainer extends Component {
         <div className="index">
           <h2>Fellowship of the Ring</h2>
 
+          {usingRingIndex && <button onClick={this.recoverRing}>Recover Ring</button>}
+
           <div className="container">
             <HeroFilter
               placeholder='Search the hero'
@@ -56,7 +112,14 @@ export default class HeroContainer extends Component {
 
             {filteredArray.length === 0 && <div>No heroes...</div>}
 
-            {filteredArray.length > 0 && <HeroTable heroes={filteredArray} />}
+            {filteredArray.length > 0 && (
+              <HeroTable
+                heroes={filteredArray}
+                killHero={this.killHero}
+                putRing={this.putRing}
+                heroUsingRing={usingRingIndex}
+              />
+            )}
           </div>
         </div>
       </div>

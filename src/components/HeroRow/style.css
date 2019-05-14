@@ -1,0 +1,8 @@
+.controls {
+  cursor: pointer;
+}
+
+.dead {
+  text-decoration: line-through;
+  background: gray;
+}
