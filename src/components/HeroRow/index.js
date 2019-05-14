@@ -1,5 +1,21 @@
 import React from 'react'
 import './style.css'
+import HeroContext from '../../context/HeroContext'
+
+const HeroRowContainer = ({hero}) => {
+  return (
+    <HeroContext.Consumer>
+      {context => (
+        <HeroRow
+          hero={hero}
+          killHero={() => context.killHero(hero.id)}
+          putRing={() => context.putRing(hero.id)}
+          heroUsingRing={context.heroUsingRing}
+        />
+      )}
+    </HeroContext.Consumer>
+  )
+} 
 
 const HeroRow = ({ hero, killHero, putRing, heroUsingRing }) => {
   const {
@@ -33,4 +49,4 @@ const HeroRow = ({ hero, killHero, putRing, heroUsingRing }) => {
   )
 }
 
-export default HeroRow
+export default HeroRowContainer

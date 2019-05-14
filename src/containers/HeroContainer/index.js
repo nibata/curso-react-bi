@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import HeroFilter from '../../components/HeroFilter'
 import HeroTable from '../../components/HeroTable'
+import HeroContext from '../../context/HeroContext'
 
 export default class HeroContainer extends Component {
   constructor (props) {
@@ -17,12 +18,12 @@ export default class HeroContainer extends Component {
         '6': { id: '6', name: 'Bilbo', race: 'Hobbit', age: '200', weapon: 'Dagger 🗡' }
       },
       heroesList: ['1', '2', '3', '4', '5', '6'],
-      usingRingIndex: null
+      usingRingIndex: null,
+      killHero: this.killHero.bind(this),
+      putRing: this.putRing.bind(this)
     }
 
     this.handleInputChange = this.handleInputChange.bind(this)
-    this.killHero = this.killHero.bind(this)
-    this.putRing = this.putRing.bind(this)
     this.recoverRing = this.recoverRing.bind(this)
   }
 
@@ -82,7 +83,6 @@ export default class HeroContainer extends Component {
   }
   
   render() {
-    console.log('SE RENDERIZO')
     const { filterText, heroesList, heroesEntities, usingRingIndex } = this.state
 
     let filteredArray = heroesList.map(heroId => heroesEntities[heroId])
@@ -97,7 +97,7 @@ export default class HeroContainer extends Component {
     }
 
     return (
-      <div className="App">
+      <HeroContext.Provider value={this.state}>
         <div className="index">
           <h2>Fellowship of the Ring</h2>
 
@@ -115,14 +115,11 @@ export default class HeroContainer extends Component {
             {filteredArray.length > 0 && (
               <HeroTable
                 heroes={filteredArray}
-                killHero={this.killHero}
-                putRing={this.putRing}
-                heroUsingRing={usingRingIndex}
               />
             )}
           </div>
         </div>
-      </div>
+      </HeroContext.Provider>
     )
   }
 }

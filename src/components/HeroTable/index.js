@@ -1,7 +1,7 @@
 import React from 'react'
-import HeroRow from '../HeroRow'
+import HeroContainer from '../HeroRow'
 
-const HeroTable = ({ heroes, killHero, putRing, heroUsingRing }) => (
+const HeroTable = ({ heroes }) => (
   <table className="characters-table">
     <tbody>
       <tr className="character-row">
@@ -12,12 +12,9 @@ const HeroTable = ({ heroes, killHero, putRing, heroUsingRing }) => (
         <th></th>
       </tr>
       {heroes.map((hero, index) => (
-        <HeroRow
+        <HeroContainer
           key={index} 
           hero={hero}
-          heroUsingRing={heroUsingRing}
-          killHero={() => killHero(hero.id)}
-          putRing={() => putRing(hero.id)}
         />
       ))}
     </tbody>
