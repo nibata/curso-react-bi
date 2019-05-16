@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import HeroFilter from '../../components/HeroFilter'
 import HeroTable from '../../components/HeroTable'
+import Button from '../../components/Button'
 import HeroContext from '../../context/HeroContext'
 
 export default class HeroContainer extends Component {
@@ -34,6 +35,8 @@ export default class HeroContainer extends Component {
   componentDidUpdate () {
     if (this.state.usingRingIndex) {
       document.title = 'Alguien está usando el anillo.'
+    } else {
+      document.title = 'Comunidad del anillo'
     }
   }
 
@@ -101,7 +104,11 @@ export default class HeroContainer extends Component {
         <div className="index">
           <h2>Fellowship of the Ring</h2>
 
-          {usingRingIndex && <button onClick={this.recoverRing}>Recover Ring</button>}
+          <Button
+            text='Recover Ring'
+            clickHandler={this.recoverRing}
+            visible={usingRingIndex}
+          />
 
           <div className="container">
             <HeroFilter
