@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 import HeroFilter from '../../components/HeroFilter'
 import HeroTable from '../../components/HeroTable'
 import Button from '../../components/Button'
+import HeroForm from '../../components/HeroForm'
 import HeroContext from '../../context/HeroContext'
+import './style.css'
 
 export default class HeroContainer extends Component {
   constructor (props) {
@@ -21,11 +23,14 @@ export default class HeroContainer extends Component {
       heroesList: ['1', '2', '3', '4', '5', '6'],
       usingRingIndex: null,
       killHero: this.killHero.bind(this),
-      putRing: this.putRing.bind(this)
+      putRing: this.putRing.bind(this),
+      showForm: false
     }
 
     this.handleInputChange = this.handleInputChange.bind(this)
     this.recoverRing = this.recoverRing.bind(this)
+    this.toggleForm = this.toggleForm.bind(this)
+    this.saveHero = this.saveHero.bind(this)
   }
 
   componentDidMount () {
@@ -44,6 +49,16 @@ export default class HeroContainer extends Component {
     this.setState({
       filterText: event.target.value
     })
+  }
+
+  toggleForm (event) {
+    this.setState({
+      showForm: !this.state.showForm
+    })
+  }
+
+  saveHero (hero) {
+    console.log(hero)
   }
 
   editEntity (entities, index, params) {
@@ -86,7 +101,13 @@ export default class HeroContainer extends Component {
   }
   
   render() {
-    const { filterText, heroesList, heroesEntities, usingRingIndex } = this.state
+    const {
+      filterText,
+      heroesList,
+      heroesEntities,
+      usingRingIndex,
+      showForm
+    } = this.state
 
     let filteredArray = heroesList.map(heroId => heroesEntities[heroId])
 
@@ -125,6 +146,10 @@ export default class HeroContainer extends Component {
               />
             )}
           </div>
+
+          <button onClick={this.toggleForm}>{!showForm ? 'Create Hero' : 'Cancel'}</button>
+
+          {showForm && <HeroForm submitHero={this.saveHero} />}
         </div>
       </HeroContext.Provider>
     )

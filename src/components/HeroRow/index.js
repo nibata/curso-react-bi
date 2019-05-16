@@ -41,7 +41,7 @@ const HeroRow = ({ hero, killHero, putRing, heroUsingRing }) => {
       <td>{age}</td>
       <td>{show ? weapon : 'No weapon'}</td>
       <td>
-        <div>
+        <div className='control-row'>
           <div className='controls' onClick={killHero}>☠ Kill</div>
           {!heroUsingRing && <div className='controls' onClick={putRing}>💍 Use Ring</div>}
           <button onClick={() => toggle(!show)}>{show ? 'Hide' : 'Show'} weapon</button>

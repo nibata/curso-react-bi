@@ -2,6 +2,11 @@
   cursor: pointer;
 }
 
+.control-row {
+  display: flex;
+  flex-direction: row;
+}
+
 .dead {
   text-decoration: line-through;
   background: gray;
