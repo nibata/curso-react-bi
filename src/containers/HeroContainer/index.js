@@ -4,20 +4,12 @@ import HeroTable from '../../components/HeroTable'
 import Button from '../../components/Button'
 import HeroForm from '../../components/HeroForm'
 import HeroContext from '../../context/HeroContext'
+import { connect } from 'react-redux'
+import { addFilter as addFilterCreator } from '../../redux/heroes'
 import './style.css'
 
 const HeroContainer = props => {
   const [state, setState] = useState({
-    filterText: '',
-    heroesEntities: {
-      '1': { id: '1', name: 'Gandalf', race: 'Maia', age: '2019', weapon: 'Staff 🏑' },
-      '2': { id: '2', name: 'Aragorn', race: 'Human', age: '120', weapon: 'Sword ⚔' },
-      '3': { id: '3', name: 'Legolas', race: 'Elf', age: '200', weapon: 'Bow 🏹' },
-      '4': { id: '4', name: 'Gimli', race: 'Dwarf', age: '139', weapon: 'Axe ⚒' },
-      '5': { id: '5', name: 'Frodo', race: 'Hobbit', age: '33', weapon: 'Dagger 🗡' },
-      '6': { id: '6', name: 'Bilbo', race: 'Hobbit', age: '200', weapon: 'Dagger 🗡' }
-    },
-    heroesList: ['1', '2', '3', '4', '5', '6'],
     heroUsingRing: null,
     killHero,
     putRing,
@@ -35,10 +27,9 @@ const HeroContainer = props => {
   })
   
   const handleInputChange = (event) => {
-    setState({
-      ...state,
-      filterText: event.target.value
-    })
+    const { addFilter } = props
+
+    addFilter(event.target.value)
   }
 
   const toggleForm = () => {
@@ -106,23 +97,16 @@ const HeroContainer = props => {
   }
 
   const {
-    filterText,
     heroesList,
     heroesEntities,
     heroUsingRing,
     showForm
   } = state
 
-  let filteredArray = heroesList.map(heroId => heroesEntities[heroId])
-
-  if (filterText) {
-    filteredArray = filteredArray.filter(hero => {
-      return (
-        hero.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        hero.race.toLowerCase().includes(filterText.toLowerCase())
-      )
-    })
-  }
+  const {
+    heroes,
+    filterText
+  } = props
 
   return (
     <HeroContext.Provider value={state}>
@@ -142,11 +126,11 @@ const HeroContainer = props => {
             value={filterText}
           />
 
-          {filteredArray.length === 0 && <div>No heroes...</div>}
+          {heroes.length === 0 && <div>No heroes...</div>}
 
-          {filteredArray.length > 0 && (
+          {heroes.length > 0 && (
             <HeroTable
-              heroes={filteredArray}
+              heroes={heroes}
             />
           )}
         </div>
@@ -159,4 +143,32 @@ const HeroContainer = props => {
   )
 }
 
-export default HeroContainer
+const mapStateToProps = state => {
+  const {
+    entities,
+    entitiesList,
+    filterText
+  } = state.heroes
+
+  let filteredArray = entitiesList.map(id => entities[id])
+
+  if (filterText) {
+    filteredArray = filteredArray.filter(hero => {
+      return (
+        hero.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        hero.race.toLowerCase().includes(filterText.toLowerCase())
+      )
+    })
+  }
+
+  return {
+    heroes: filteredArray,
+    filterText
+  }
+}
+
+const mapDispatchToProps = {
+  addFilter: addFilterCreator
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(HeroContainer)
